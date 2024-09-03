@@ -60,9 +60,6 @@ AB_OTA_POSTINSTALL_CONFIG += \
     FILESYSTEM_TYPE_system=ext4 \
     POSTINSTALL_OPTIONAL_system=true
 
-# VIRTUAL A/B
-ENABLE_VIRTUAL_AB := true
-
 # Boot control HAL
 PRODUCT_PACKAGES += \
     android.hardware.boot@1.2-mtkimpl.recovery \
@@ -99,7 +96,15 @@ PRODUCT_PACKAGES += \
     android.hardware.health@2.1-impl \
     android.hardware.health@2.1-service \
 
+# Additional binaries & libraries needed for recovery
+TARGET_RECOVERY_DEVICE_MODULES += \
+    libgatekeeper \
+    libgatekeeper_aidl \
+    libkeymaster41 \
+    libpuresoftkeymasterdevice
 
-TW_OVERRIDE_SYSTEM_PROPS := \
-    "ro.build.product;ro.build.fingerprint;ro.build.version.incremental;ro.product.device=ro.product.system.device;ro.product.model=ro.product.system.model;ro.product.name=ro.product.system.name"
-
+TW_RECOVERY_ADDITIONAL_RELINK_LIBRARY_FILES += \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libgatekeeper.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libgatekeeper_aidl.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster41.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libpuresoftkeymasterdevice.so
