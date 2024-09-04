@@ -19,6 +19,6 @@ PRODUCT_MAKEFILES := \
      $(LOCAL_DIR)/twrp_CH6i.mk
 
 COMMON_LUNCH_CHOICES := twrp_CH6i-eng
-#    twrp_TECNO-CH6i-eng \
-#    twrp_TECNO-CH6i-userdebug \
-#    twrp_TECNO-CH6i-user
+    twrp_TECNO-CH6i-eng \
+    twrp_TECNO-CH6i-userdebug \
+    twrp_TECNO-CH6i-user
