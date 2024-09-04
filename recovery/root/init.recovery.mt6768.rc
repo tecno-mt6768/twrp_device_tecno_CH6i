@@ -3,6 +3,7 @@ import /init.recovery.trustonic.rc
 
 on init
     export LD_LIBRARY_PATH /system/lib64:/vendor/lib64:/vendor/lib64/hw:/system/lib64/hw
+
     setprop sys.usb.configfs 1
     setprop sys.usb.ffs.aio_compat 0
 
@@ -89,11 +90,11 @@ service keymaster_attestation-1-1 /vendor/bin/vendor.mediatek.hardware.keymaster
 
 service paytrigger_hal_service /vendor/bin/vendor.mediatek.hardware.paytrigger@1.0-service
     interface vendor.mediatek.hardware.paytrigger@1.0::IPayTrigger default
-	class hal
-	user root
-	group root
+    class hal
+    user root
+    group root
     disabled
-	seclabel u:r:recovery:s0
+    seclabel u:r:recovery:s0
 
 on property:vendor.sys.listener.registered=true
     start mobicore
