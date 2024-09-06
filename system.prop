@@ -1,4 +1,5 @@
 ####################################
+
 ro.apex.updatable=true
 init.userspace_reboot.is_supported=true
 persist.adb.nonblocking_ffs=1
@@ -6,21 +7,32 @@ ro.vendor.tran.version.release=CH6i-H6921AB-S-GL-230203V1529
 ro.hardware.egl=meow
 ro.sf.lcd_density=480
 ro.soc.manufacturer=Mediatek
-ro.mtk_key_manager_support=1
 ro.vendor.tran.otg_lpo_support=1
 ro.vendor.tran.sw_otg_support=1
-####################################
 ro.vendor.mediatek.platform=MT6768
+
+####################################
+
+# Crypto
 ro.crypto.volume.filenames_mode=aes-256-cts
-##
+ro.crypto.volume.metadata.method=dm-default-key
+ro.crypto.dm_default_key.options_format.version=2
+ro.crypto.volume.options=::v2
+
+# TEE & Gatekeeper & Keymaster
+ro.mtk_key_manager_support=1
 ro.vendor.mtk_tee_gp_support=1
-ro.hardware.kmsetkey=trustonic
 ro.vendor.mtk_trustonic_tee_support=1
 ro.vendor.tran.trans_pay_tee=1
+ro.vendor.keymaster_version=4.1
+ro.hardware.gatekeeper=trustonic
+ro.hardware.kmsetkey=trustonic
 ro.hardware.paytrigger=trustonic
+ro.mtk_key_manager_support=1
 ro.vendor.mtk_f2fs_enable=1
 ro.vendor.mtk_emmc_support=1
-#
+ro.vendor.mtk_data_config=1
+
 #others functions
 ro.secure=0
 ro.adb.secure=0
@@ -34,4 +46,5 @@ ro.sys.usb.storage.type=mtp
 ro.treble.enabled=true
 sys.usb.controller=musb-hdrc
 sys.usb.ffs.aio_compat=true
+
 ####################################
