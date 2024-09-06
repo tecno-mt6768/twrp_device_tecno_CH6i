@@ -1,6 +1,7 @@
 #
-# Copyright (C) 2023 The Android Open Source Project
-# Copyright (C) 2023 The TWRP Open Source Project
+# Copyright (C) 2020 The Android Open Source Project
+# Copyright (C) 2020 The TWRP Open Source Project
+# Copyright (C) 2020 SebaUbuntu's TWRP device tree generator
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,11 +16,10 @@
 # limitations under the License.
 #
 
-# Device path
-DEVICE_PATH := device/tecno/CH6i
-
-# For building with minimal manifest
+# Allow building with minimal manifest
 ALLOW_MISSING_DEPENDENCIES := true
+
+DEVICE_PATH := device/tecno/CH6i
 
 # Architecture
 TARGET_ARCH := arm64
@@ -39,26 +39,29 @@ TARGET_USES_64_BIT_BINDER := true
 TARGET_SUPPORTS_64_BIT_APPS := true
 TARGET_IS_64_BIT := true
 
-# CPUSet
+# Enable CPUSets
 ENABLE_CPUSETS := true
 ENABLE_SCHEDBOOST := true
 
-# Platform
-TARGET_BOARD_PLATFORM := mt6768
-BOARD_USES_MTK_HARDWARE := true
+# AB
+AB_OTA_UPDATER := true
 
 # Bootloader
 TARGET_BOOTLOADER_BOARD_NAME := TECNO-CH6i
-TARGET_NO_BOOTLOADER := true
-TARGET_USES_UEFI := true
+TARGET_NO_BOOTLOADER         := true
 
-# Assert
+# Platform
+BOARD_USES_MTK_HARDWARE := true
+TARGET_BOARD_PLATFORM   := mt6768
+PRODUCT_PLATFORM        := mt6768
+TARGET_USES_UEFI        := true
+
+# OTA
 TARGET_OTA_ASSERT_DEVICE := TECNO-CH6i,TECNO CH6i,CH6i-GL
 
 # Kernel
 BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2
 BOARD_KERNEL_CMDLINE += androidboot.force_normal_boot=1
-BOARD_NAME := CY-CH6I-H6921
 BOARD_KERNEL_OFFSET := 0x00008000
 BOARD_KERNEL_BASE := 0x40078000
 BOARD_RAMDISK_OFFSET := 0x07c08000
@@ -72,7 +75,6 @@ TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
 BOARD_HASH_TYPE := sha1
 BOARD_BOOTIMG_HEADER_VERSION := 2
 BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
-BOARD_MKBOOTIMG_ARGS += --board $(BOARD_NAME)
 BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --kernel_offset $(BOARD_KERNEL_OFFSET)
@@ -80,46 +82,13 @@ BOARD_MKBOOTIMG_ARGS += --second_offset $(BOARD_KERNEL_SECOND_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 BOARD_MKBOOTIMG_ARGS += --base $(BOARD_KERNEL_BASE)
-BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
+BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE) --board "CY-CH6I-H6921"
 BOARD_MKBOOTIMG_ARGS += --dtb_offset $(BOARD_DTB_OFFSET)
 
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_HEADER_ARCH := arm64
 
-# File systems and partitions
-BOARD_HAS_LARGE_FILESYSTEM := true
-BOARD_BOOTIMAGE_PARTITION_SIZE := 100663296 #33554432-( without re-marking )
-BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := f2fs
-
-TARGET_USERIMAGES_USE_EXT4 := true
-TARGET_USERIMAGES_USE_F2FS := true
-
-# Workaround for error copying files to recovery ramdisk
-TARGET_COPY_OUT_PRODUCT := product
-TARGET_COPY_OUT_VENDOR := vendor
-TARGET_COPY_OUT_SYSTEM_EXT = system_ext
-
-# Recovery
-BOARD_USES_RECOVERY_AS_BOOT := true
-BOARD_HAS_NO_SELECT_BUTTON := true
-TARGET_NO_RECOVERY := true
-TW_HAS_NO_RECOVERY_PARTITION := true
-
-# Dynamic Partition
-BOARD_SUPER_PARTITION_SIZE := 9656598528
-BOARD_SUPER_PARTITION_GROUPS := main
-BOARD_MAIN_SIZE := 9652404224 # (BOARD_SUPER_PARTITION_SIZE - 4MB)
-BOARD_MAIN_PARTITION_LIST :=  system system_ext product vendor
-
-# System as root
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
-BOARD_SUPPRESS_SECURE_ERASE := true
-
-# AVB - Android Verified Boot
+# AVB
 BOARD_AVB_ENABLE := true
 BOARD_AVB_VBMETA_SYSTEM := system product
 BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
@@ -151,100 +120,137 @@ BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.boot.security_patch:$(PLATFORM_SECURITY_PATCH)
 
 # Hack to get keymaster to recognize the key files
+PLATFORM_VERSION        := 12.0.0
 PLATFORM_SECURITY_PATCH := 2099-12-31
-PLATFORM_VERSION := 16.1.0
-VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
+VENDOR_SECURITY_PATCH   := $(PLATFORM_SECURITY_PATCH)
 PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
+
+# System as root
+BOARD_ROOT_EXTRA_FOLDERS      := tranfs
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
+BOARD_SUPPRESS_SECURE_ERASE   := true
+
+# Partitions configs
+TARGET_NO_RECOVERY          := true
+BOARD_USES_RECOVERY_AS_BOOT := true
 
 # Metadata
 BOARD_USES_METADATA_PARTITION := true
 BOARD_ROOT_EXTRA_FOLDERS += metadata tranfs
 
-# Properties
+# Partitions size
+BOARD_BOOTIMAGE_PARTITION_SIZE := 100663296 #33554432
+
+# Dynamic Partitions
+BOARD_MAIN_SIZE := 9652404224 # (BOARD_SUPER_PARTITION_SIZE - 4MB)
+BOARD_SUPER_PARTITION_SIZE := 9652404224
+BOARD_SUPER_PARTITION_GROUPS := main
+BOARD_MAIN_PARTITION_LIST    := system vendor product system_ext
+
+# File systems
+BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE     := ext4
+BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE     := ext4
+BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE    := ext4
+BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE   := f2fs
+
+TARGET_USERIMAGES_USE_F2FS := true
+TARGET_USERIMAGES_USE_EXT4 := true
+
+TARGET_COPY_OUT_SYSTEM_EXT := system_ext
+TARGET_COPY_OUT_PRODUCT    := product
+TARGET_COPY_OUT_VENDOR     := vendor
+
+TW_NO_BIND_SYSTEM := true
+
+# Recovery
+BOARD_HAS_LARGE_FILESYSTEM := true
 TARGET_SYSTEM_PROP     += $(DEVICE_PATH)/system.prop
 TARGET_RECOVERY_FSTAB  := $(DEVICE_PATH)/recovery/root/system/etc/recovery.fstab
 TARGET_RECOVERY_INITRC := $(DEVICE_PATH)/recovery/root/init.recovery.mt6768.rc
 
-# Charger
-BOARD_CHARGER_ENABLE_SUSPEND := true
-TARGET_DISABLE_TRIPLE_BUFFERING := false
-BOARD_CHARGER_DISABLE_INIT_BLANK := true
-BOARD_USE_FRAMEBUFFER_ALPHA_CHANNEL := true
-
 # TWRP Configuration
-TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone1/temp
-TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/class/leds/lcd-backlight/brightness\"
-TW_BRIGHTNESS_PATH := /sys/class/leds/lcd-backlight/brightness
-TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
-TW_MAX_BRIGHTNESS := 255
-TW_DEFAULT_BRIGHTNESS := 100
-#TW_SCREEN_BLANK_ON_BOOT := true
-TW_INPUT_BLACKLIST := "hbtp_vm"
-TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID := true
-TW_EXTRA_LANGUAGES := true
-TW_DEFAULT_LANGUAGE := ru
-TW_NO_SCREEN_BLANK := true
-TW_NO_BATT_PERCENT := false
-
-## TWRP-Specific configuration
+TW_BACKUP_EXCLUSIONS    := /Files/backup
+TW_EXTRA_LANGUAGES      := true
+TW_DEFAULT_LANGUAGE     := ru
+TW_SCREEN_BLANK_ON_BOOT := true
 TW_SKIP_ADDITIONAL_FSTAB := true
-TW_EXCLUDE_DEFAULT_USB_INIT := true
+BOARD_HAS_NO_SELECT_BUTTON := true
+TW_HAS_NO_RECOVERY_PARTITION := true
 
+# Debug
+TWRP_INCLUDE_LOGCAT := true
+TARGET_USES_LOGD    := true
+
+# Tools / Resetprop and magiskboot / TWRP-Specific configuration
+
+TW_INCLUDE_RESETPROP    := true
+TW_INCLUDE_LIBRESETPROP := true
+TW_INCLUDE_REPACKTOOLS  := true
 TW_INCLUDE_FUSE_EXFAT := true
+
 TW_NO_FASTBOOT_BOOT := true
+TW_NO_SCREEN_BLANK  := true
 TARGET_USES_MKE2FS  := true
 TW_INCLUDE_NTFS_3G  := true
 TW_USE_TOOLBOX      := true
 
-TW_EXCLUDE_MTP    := false
 TW_EXCLUDE_TWRPAPP := true
-TW_EXCLUDE_APEX    := false
+TW_EXCLUDE_APEX    := true
 TW_EXCLUDE_PYTHON  := true
 TW_EXCLUDE_NANO    := false
-TW_EXCLUDE_LPTOOLS := false
+TW_EXCLUDE_LPTOOLS := true
 TW_EXCLUDE_LPDUMP  := true
 TW_EXCLUDE_BASH    := false
 TW_EXCLUDE_TZDATA  := false
-#TW_INCLUDE_REPACK_TOOL := true
+TW_INCLUDE_REPACK_TOOL := true
 
-# Fix stock .ozip installation
-TW_SKIP_COMPATIBILITY_CHECK := true
-TW_OZIP_DECRYPT_KEY := 0000
-
-# resetprop and magiskboot
-TW_INCLUDE_RESETPROP := true
-TW_INCLUDE_REPACKTOOLS := true
-TW_INCLUDE_LIBRESETPROP :=true
-
-# Debug
-TWRP_INCLUDE_LOGCAT := true
-TARGET_USES_LOGD := true
-
-# Resolution
+# Density / StatusBar
+TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone1/temp
+TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/class/leds/lcd-backlight/brightness\"
+TW_BRIGHTNESS_PATH := /sys/class/leds/lcd-backlight/brightness
+TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
+TW_INPUT_BLACKLIST    := "hbtp_vm"
+TW_MAX_BRIGHTNESS := 255
+TW_DEFAULT_BRIGHTNESS := 100
 TW_THEME := portrait_hdpi
 DEVICE_SCREEN_WIDTH := 1080
 DEVICE_SCREEN_HEIGHT := 2460
-#TW_Y_OFFSET  := 80 
-#TW_H_OFFSET  := -80
-
-# Statusbar icons flags 1080 x 2400
+TARGET_SCREEN_DENSITY := 480
 TW_STATUS_ICONS_ALIGN := center
 #TW_CUSTOM_CPU_POS := 50
 TW_CUSTOM_CLOCK_POS := 610
 #TW_CUSTOM_BATTERY_POS := 800
+#TW_Y_OFFSET  := 80 
+#TW_H_OFFSET  := -80
+
+# Fix stock .ozip installation
+TW_SKIP_COMPATIBILITY_CHECK := true
+TW_OZIP_DECRYPT_KEY := 0000
 
 # Selinux
 SEPOLICY_IGNORE_NEVERALLOWS := true
 SELINUX_IGNORE_NEVERALLOWS  := true
 
 # Crypto
-TW_INCLUDE_CRYPTO  := true
-TW_INCLUDE_CRYPTO_FBE := true
+TW_INCLUDE_CRYPTO               := true
+TW_INCLUDE_CRYPTO_FBE           := true
 TW_INCLUDE_FBE_METADATA_DECRYPT := true
+
+# Charger Mode
+BOARD_CHARGER_ENABLE_SUSPEND := true
+TARGET_DISABLE_TRIPLE_BUFFERING := false
+BOARD_CHARGER_DISABLE_INIT_BLANK := true
+BOARD_USE_FRAMEBUFFER_ALPHA_CHANNEL := true
 
 # Storage
 RECOVERY_SDCARD_ON_DATA := true
-TW_MTP_DEVICE := /dev/mtp_usb
+#BOARD_HAS_NO_REAL_SDCARD := true
+TW_EXCLUDE_DEFAULT_USB_INIT := true
+TW_EXCLUDE_MTP := false
+
+# USB Mounting
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /config/usb_gadget/g1/functions/mass_storage.usb0/lun.%d/file
 
+# Device 
 TW_DEVICE_VERSION := Tecno Camon 19 Neo_V1529
