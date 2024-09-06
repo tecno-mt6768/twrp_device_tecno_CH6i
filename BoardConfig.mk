@@ -168,7 +168,8 @@ TW_INCLUDE_CRYPTO_FBE           := true
 TW_INCLUDE_FBE_METADATA_DECRYPT := true
 
 # Properties
-TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
+TARGET_SYSTEM_PROP     += $(DEVICE_PATH)/system.prop
+TARGET_RECOVERY_FSTAB  := $(DEVICE_PATH)/recovery/root/system/etc/recovery.fstab
 TARGET_RECOVERY_INITRC := $(DEVICE_PATH)/recovery/root/init.recovery.mt6768.rc
 
 # Charger
